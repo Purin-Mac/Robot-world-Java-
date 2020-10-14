@@ -1,6 +1,5 @@
 package java_robot.world;
 
-
 import java_robot.robot.Robot;      //import Robot
 import java_robot.objective.Objective; //import Objective
 import java_robot.wall.Wall;    //import Wall
@@ -15,6 +14,9 @@ import javax.swing.JPanel;
 import java.util.Random;  //import to use random
 
 
+import java.io.File;  // Import the File class
+import java.io.FileNotFoundException;  // Import this class to handle errors
+import java.util.Scanner; // Import the Scanner class to read text files
 
 /* World Class use create Robot World widget */
 
@@ -48,9 +50,61 @@ public class World extends JPanel implements KeyListener, ActionListener {
         setFocusTraversalKeysEnabled(false);
     }
 
+    public World(String filename) {
+    /* read or load file from filename
+    */
+      try {
+        int line = 1;
+        int createdWall = 0;
+        File myObj = new File(filename);
+        Scanner myReader = new Scanner(myObj);
+        while (myReader.hasNextLine()) {
+          String data = myReader.nextLine();
+          if (line == 1 ){  //read world row and column  then collect <-- world=x,y
+              String[] splited = data.split("=");
+              String[] dataline = splited[1].split(",");
+              row = Integer.valueOf(dataline[0]);
+              column = Integer.valueOf(dataline[1]);
+          }
 
+          else if (line == 2 ){ //read Robot attribute  <-- robot=x,y
+              String[] splited = data.split("=");
+              String[] dataline = splited[1].split(",");
+              myRobot = new Robot(Integer.valueOf(dataline[0]),Integer.valueOf(dataline[1]));
+          }
 
+          else if (line == 3 ){   //read Objective attribute <-- objective=x,y
+              String[] splited = data.split("=");
+              String[] dataline = splited[1].split(",");
+              myObjective = new Objective(Integer.valueOf(dataline[0]),Integer.valueOf(dataline[1]));
+          }
 
+          else if (line == 4 ){  //read wall quantitity or array size <-- wall=x
+              String[] splited = data.split("=");
+              myWall = new Wall[Integer.valueOf(splited[1])];
+              totalWall = Integer.valueOf(splited[1]);
+          }
+          else {  //read each Wall attribute  <-- x,y
+              String[] dataline = data.split(",");
+              myWall[createdWall] = new Wall(Integer.valueOf(dataline[0]),Integer.valueOf(dataline[1]));
+              createdWall++;
+          }
+
+          line++;
+        }
+        myReader.close();
+      }
+      catch (FileNotFoundException e) {
+        System.out.println("An error occurred.");
+        e.printStackTrace();
+      }
+
+      addKeyListener(this);         //add Class know keyPressed
+      setFocusable(true);
+      setFocusTraversalKeysEnabled(false);
+    }
+
+    @Override
     public void paint(Graphics graphics) {
         //background
         graphics.setColor(Color.white);  //draw white background
@@ -61,6 +115,7 @@ public class World extends JPanel implements KeyListener, ActionListener {
         }
         myObjective.drawObjective(graphics); //draw objective
         this.drawLine(graphics);        //draw world line
+
     }
 
     @Override
@@ -78,6 +133,7 @@ public class World extends JPanel implements KeyListener, ActionListener {
 
         }
         repaint();   //draw again
+
 
     }
 
