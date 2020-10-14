@@ -1,6 +1,8 @@
 package java_robot.world;
 
+
 import java_robot.robot.Robot;      //import Robot
+import java_robot.objective.Objective; //import Objective
 
 
 import java.awt.Color;      //import to use Color
@@ -22,12 +24,14 @@ public class World extends JPanel implements KeyListener, ActionListener {
     private int totalWall;  //set totalWall as attribute to collect wall quantitity
     private Random rand = new Random();  //instance Random to use random
     private Robot myRobot;   //set myRobot as object of Robot
+    private Objective myObjective; //set myObjective as object of Robot
 
     public World(int row,int column) {
         totalWall = (int)row*column/3; //calculate quantitity of wall
         this.row=row;       //collect row
         this.column=column; //collect column
         this.myRobot = new Robot();     //instance Robot
+        this.myObjective = new Objective(); //instance Objective
 
         addKeyListener(this);  //add class know keyPressed
         setFocusable(true);
@@ -42,6 +46,7 @@ public class World extends JPanel implements KeyListener, ActionListener {
         graphics.setColor(Color.white);  //draw white background
         graphics.fillRect(0, 0, 720, 720);
         myRobot.drawRobot(graphics);
+        myObjective.drawObjective(graphics); //draw objective
         this.drawLine(graphics);        //draw world line
     }
 
