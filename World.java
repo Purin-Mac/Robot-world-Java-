@@ -1,11 +1,11 @@
 package java_robot.world;
 
 import java_robot.robot.Robot;      //import Robot
-import java_robot.objective.Objective; //import Objective
+import java_robot.objective.Objective;    //import Objective
 import java_robot.wall.Wall;    //import Wall
 
-import java.awt.Color;      //import to use Color
-import java.awt.Graphics;       //import to draw geometric
+import java.awt.Color;  //import to use Color
+import java.awt.Graphics;   //import to draw geometric
 import java.awt.event.ActionEvent;  //import to use active panel
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -15,8 +15,10 @@ import java.util.Random;  //import to use random
 
 
 import java.io.File;  // Import the File class
+import java.io.FileWriter;   // Import the FileWriter class
 import java.io.FileNotFoundException;  // Import this class to handle errors
 import java.util.Scanner; // Import the Scanner class to read text files
+import java.io.IOException;  // Import the IOException class to handle errors
 
 /* World Class use create Robot World widget */
 
@@ -109,11 +111,11 @@ public class World extends JPanel implements KeyListener, ActionListener {
         //background
         graphics.setColor(Color.white);  //draw white background
         graphics.fillRect(0, 0, 720, 720);
+        myObjective.drawObjective(graphics); //draw objective
         myRobot.drawRobot(graphics);  //draw myRobot
         for(int i = 0; i<totalWall;i++){  //draw each wall
             myWall[i].drawWall(graphics);
         }
-        myObjective.drawObjective(graphics); //draw objective
         this.drawLine(graphics);        //draw world line
 
     }
@@ -130,6 +132,10 @@ public class World extends JPanel implements KeyListener, ActionListener {
         }
         if (ke.getKeyCode() == KeyEvent.VK_UP) { //if arrow key up
             myRobot.move();    //let's robot move forward
+
+        }
+        if (ke.getKeyCode() == KeyEvent.VK_F1) { //if Function 1 key
+            this.saveWorld("worldsave.txt");    //save world data
 
         }
         repaint();   //draw again
@@ -154,13 +160,33 @@ public class World extends JPanel implements KeyListener, ActionListener {
     public  void drawLine(Graphics graphics){
         int widthPerBlock = (int)(720/row);  //calculate space of block
         int heightPerBlock =(int)(720/column);
+        graphics.setColor(Color.DARK_GRAY);
         for(int i=0;i<=row;i++){
-            graphics.setColor(Color.black);
             graphics.fillRect(widthPerBlock*i,0,1,720); //draw vertical line
         }
         for(int i=0;i<=column;i++){
-            graphics.setColor(Color.black);
             graphics.fillRect(0,widthPerBlock*i,720,1); //draw horizontal line
+        }
+    }
+
+    public void saveWorld(String filename){
+        try {
+            File save = new File(filename);  //create filename.txt
+            save.createNewFile();       //create File
+            FileWriter mySave = new FileWriter(filename);       //create Writer Filename.txt
+            mySave.write("world="+this.row+","+this.column+"\n");       //writer world data
+            mySave.write("ROBOT="+myRobot.getRow()+","+myRobot.getColumn()+"\n"); //writer robot data
+            mySave.write("Objective="+myObjective.getRow()+","+myObjective.getColumn()+"\n"); //wrte objective data
+            mySave.write("wall="+totalWall+"\n");  //write quantitity of wall
+            for (int i=0;i<totalWall;i++){
+                mySave.write(myWall[i].getRow()+","+myWall[i].getColumn()+"\n"); //wirte each wall
+            }
+            mySave.close();     //close file
+            System.out.println("Successfully wrote to the file.");
+        }
+        catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
     }
 
