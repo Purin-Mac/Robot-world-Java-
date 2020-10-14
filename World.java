@@ -65,7 +65,19 @@ public class World extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void keyPressed(KeyEvent ke) {
-        repaint();
+        if (ke.getKeyCode() == KeyEvent.VK_RIGHT) {  //if arrow key right
+            myRobot.turnRight();  //let's robot turn left
+
+        }
+        if (ke.getKeyCode() == KeyEvent.VK_LEFT) {  //if arrow key left
+            myRobot.turnLeft(); //let's robot turn left
+
+        }
+        if (ke.getKeyCode() == KeyEvent.VK_UP) { //if arrow key up
+            myRobot.move();    //let's robot move forward
+
+        }
+        repaint();   //draw again
 
     }
 
