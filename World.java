@@ -3,7 +3,7 @@ package java_robot.world;
 
 import java_robot.robot.Robot;      //import Robot
 import java_robot.objective.Objective; //import Objective
-
+import java_robot.wall.Wall;    //import Wall
 
 import java.awt.Color;      //import to use Color
 import java.awt.Graphics;       //import to draw geometric
@@ -25,6 +25,7 @@ public class World extends JPanel implements KeyListener, ActionListener {
     private Random rand = new Random();  //instance Random to use random
     private Robot myRobot;   //set myRobot as object of Robot
     private Objective myObjective; //set myObjective as object of Robot
+    private Wall myWall;  //set myWall as array object of Wall
 
     public World(int row,int column) {
         totalWall = (int)row*column/3; //calculate quantitity of wall
@@ -32,6 +33,7 @@ public class World extends JPanel implements KeyListener, ActionListener {
         this.column=column; //collect column
         this.myRobot = new Robot();     //instance Robot
         this.myObjective = new Objective(); //instance Objective
+        this.myWall = new Wall(5,7);
 
         addKeyListener(this);  //add class know keyPressed
         setFocusable(true);
@@ -47,6 +49,7 @@ public class World extends JPanel implements KeyListener, ActionListener {
         graphics.fillRect(0, 0, 720, 720);
         myRobot.drawRobot(graphics);
         myObjective.drawObjective(graphics); //draw objective
+        myWall.drawWall(graphics);
         this.drawLine(graphics);        //draw world line
     }
 
