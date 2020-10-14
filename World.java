@@ -21,20 +21,28 @@ import java.util.Random;  //import to use random
 public class World extends JPanel implements KeyListener, ActionListener {
 
     private int row,column; //set row,column as attribute to collect world size
-    private int totalWall;  //set totalWall as attribute to collect wall quantitity
-    private Random rand = new Random();  //instance Random to use random
     private Robot myRobot;   //set myRobot as object of Robot
     private Objective myObjective; //set myObjective as object of Robot
-    private Wall myWall;  //set myWall as array object of Wall
+    private int totalWall;  //set totalWall as attribute to collect wall quantitity
+    private Wall[] myWall;  //set myWall as array object of Wall
+    private Random rand = new Random();  //instance Random to use random
 
     public World(int row,int column) {
         totalWall = (int)row*column/3; //calculate quantitity of wall
+        myWall = new Wall[totalWall];  //set array size
         this.row=row;       //collect row
         this.column=column; //collect column
         this.myRobot = new Robot();     //instance Robot
         this.myObjective = new Objective(); //instance Objective
-        this.myWall = new Wall(5,7);
-
+        int created = 0;
+        while(created < totalWall){       //instance each Wall with no overlap with objective and robot
+            int rand1 = rand.nextInt(12);
+            int rand2 = rand.nextInt(12);
+            if(rand1 != myRobot.getRow() && rand2 != myRobot.getColumn() && rand1 != myObjective.getRow() && rand2 != myObjective.getColumn()){
+                myWall[created] = new Wall(rand1,rand2);
+                created++;
+            }
+        }
         addKeyListener(this);  //add class know keyPressed
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
@@ -47,9 +55,11 @@ public class World extends JPanel implements KeyListener, ActionListener {
         //background
         graphics.setColor(Color.white);  //draw white background
         graphics.fillRect(0, 0, 720, 720);
-        myRobot.drawRobot(graphics);
+        myRobot.drawRobot(graphics);  //draw myRobot
+        for(int i = 0; i<totalWall;i++){  //draw each wall
+            myWall[i].drawWall(graphics);
+        }
         myObjective.drawObjective(graphics); //draw objective
-        myWall.drawWall(graphics);
         this.drawLine(graphics);        //draw world line
     }
 
