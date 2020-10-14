@@ -1,5 +1,7 @@
 package java_robot.world;
 
+import java_robot.robot.Robot;      //import Robot
+
 
 import java.awt.Color;      //import to use Color
 import java.awt.Graphics;       //import to draw geometric
@@ -19,11 +21,13 @@ public class World extends JPanel implements KeyListener, ActionListener {
     private int row,column; //set row,column as attribute to collect world size
     private int totalWall;  //set totalWall as attribute to collect wall quantitity
     private Random rand = new Random();  //instance Random to use random
+    private Robot myRobot;   //set myRobot as object of Robot
 
     public World(int row,int column) {
         totalWall = (int)row*column/3; //calculate quantitity of wall
         this.row=row;       //collect row
         this.column=column; //collect column
+        this.myRobot = new Robot();     //instance Robot
 
         addKeyListener(this);  //add class know keyPressed
         setFocusable(true);
@@ -32,12 +36,12 @@ public class World extends JPanel implements KeyListener, ActionListener {
 
 
 
-    @Override
+
     public void paint(Graphics graphics) {
         //background
         graphics.setColor(Color.white);  //draw white background
         graphics.fillRect(0, 0, 720, 720);
-
+        myRobot.drawRobot(graphics);
         this.drawLine(graphics);        //draw world line
     }
 
