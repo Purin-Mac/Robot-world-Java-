@@ -3,6 +3,7 @@ package java_robot.world;
 import java_robot.robot.Robot;      //import Robot
 import java_robot.objective.Objective;    //import Objective
 import java_robot.wall.Wall;    //import Wall
+import java_robot.inputprocessor.InputProcessor;    //import InputProcessor
 
 import java.awt.Color;  //import to use Color
 import java.awt.Graphics;   //import to draw geometric
@@ -29,7 +30,9 @@ public class World extends JPanel implements KeyListener, ActionListener {
     private Objective myObjective; //set myObjective as object of Robot
     private int totalWall;  //set totalWall as attribute to collect wall quantitity
     private Wall[] myWall;  //set myWall as array object of Wall
+    private InputProcessor myInputProcessor; //set myInput as object of InputProcessor
     private Random rand = new Random();  //instance Random to use random
+    private char move, turnLeft, turnRight; //set move, turnLeft, turnRight as attribute to collect key input 
 
     public World(int row,int column) {
         totalWall = (int)row*column/3; //calculate quantitity of wall
@@ -47,6 +50,7 @@ public class World extends JPanel implements KeyListener, ActionListener {
                 created++;
             }
         }
+        this.myInputProcessor = new InputProcessor(myRobot, myWall);
         addKeyListener(this);  //add class know keyPressed
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
@@ -86,6 +90,22 @@ public class World extends JPanel implements KeyListener, ActionListener {
               myWall = new Wall[Integer.valueOf(splited[1])];
               totalWall = Integer.valueOf(splited[1]);
           }
+
+          else if (line == 4 + totalWall + 1){ //read Input moveKey <-- move
+              String[] splited = data.split("=");
+              this.move = splited[1].charAt(0);
+          }
+
+          else if (line == 4 + totalWall + 2){ //read Input leftKey <-- turnLeft
+            String[] splited = data.split("=");
+            this.turnLeft = splited[1].charAt(0);
+          }
+
+          else if (line == 4 + totalWall + 3){ //read Input rightKey <-- turnRight
+            String[] splited = data.split("=");
+            this.turnRight = splited[1].charAt(0);
+          }
+
           else {  //read each Wall attribute  <-- x,y
               String[] dataline = data.split(",");
               myWall[createdWall] = new Wall(Integer.valueOf(dataline[0]),Integer.valueOf(dataline[1]));
@@ -122,25 +142,12 @@ public class World extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void keyPressed(KeyEvent ke) {
-        if (ke.getKeyCode() == KeyEvent.VK_RIGHT) {  //if arrow key right
-            myRobot.turnRight();  //let's robot turn left
-
-        }
-        if (ke.getKeyCode() == KeyEvent.VK_LEFT) {  //if arrow key left
-            myRobot.turnLeft(); //let's robot turn left
-
-        }
-        if (ke.getKeyCode() == KeyEvent.VK_UP) { //if arrow key up
-            myRobot.move();    //let's robot move forward
-
-        }
-        if (ke.getKeyCode() == KeyEvent.VK_F1) { //if Function 1 key
+        myInputProcessor.checkMove(ke.getKeyChar(), row, column, totalWall); //check input key
+        if (myInputProcessor.getSave() == true){
             this.saveWorld("worldsave.txt");    //save world data
-
+            myInputProcessor.setSave(false);
         }
         repaint();   //draw again
-
-
     }
 
     @Override
@@ -165,7 +172,7 @@ public class World extends JPanel implements KeyListener, ActionListener {
             graphics.fillRect(widthPerBlock*i,0,1,720); //draw vertical line
         }
         for(int i=0;i<=column;i++){
-            graphics.fillRect(0,widthPerBlock*i,720,1); //draw horizontal line
+            graphics.fillRect(0,heightPerBlock*i,720,1); //draw horizontal line
         }
     }
 
@@ -181,6 +188,9 @@ public class World extends JPanel implements KeyListener, ActionListener {
             for (int i=0;i<totalWall;i++){
                 mySave.write(myWall[i].getRow()+","+myWall[i].getColumn()+"\n"); //wirte each wall
             }
+            mySave.write("MoveKey="+myInputProcessor.getMoveKey()+"\n"); //write move key
+            mySave.write("LeftKey="+myInputProcessor.getLeftKey()+"\n"); //write turn left key
+            mySave.write("RightKey="+myInputProcessor.getRightKey()+"\n"); //write turn right key
             mySave.close();     //close file
             System.out.println("Successfully wrote to the file.");
         }

@@ -89,4 +89,7 @@ public class Robot {
         return column;
     }
 
+    public int getDegree(){
+        return degree;
+    }
 }
