@@ -104,6 +104,7 @@ public class World extends JPanel implements KeyListener, ActionListener {
           else if (line == 4 + totalWall + 3){ //read Input rightKey <-- turnRight
             String[] splited = data.split("=");
             this.turnRight = splited[1].charAt(0);
+            this.myInputProcessor = new InputProcessor(move, turnLeft, turnRight, myRobot, myWall);
           }
 
           else {  //read each Wall attribute  <-- x,y
