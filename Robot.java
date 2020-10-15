@@ -25,7 +25,28 @@ public class Robot {
 
     public void drawRobot(Graphics graphics){
         graphics.setColor(Color.DARK_GRAY);  //set Color is Dark Gray
-        graphics.fillRect(720*row/12+720/72,720*column/12+720/72,40,40);  //draw att row and column
+        int widthPerBlock = (int)(720/12); // calculate space of block
+        int heightPerBlock =(int)(720/12);
+        if ( degree==90 ){ //head point to south
+            graphics.drawPolygon(new int[] {widthPerBlock*row + 10, widthPerBlock*row + widthPerBlock/2, widthPerBlock*row + widthPerBlock - 10}, 
+            new int[] {heightPerBlock*column + 10, heightPerBlock*column + heightPerBlock - 10, heightPerBlock*column + 10}, 3); 
+            //[left side of base, head, right side of base]
+        }
+        else if (degree==270){ //head point to north 
+            graphics.drawPolygon(new int[] {widthPerBlock*row + 10, widthPerBlock*row + widthPerBlock/2, widthPerBlock*row + widthPerBlock - 10}, 
+            new int[] {heightPerBlock*column + heightPerBlock - 10, heightPerBlock*column + 10, heightPerBlock*column + heightPerBlock - 10}, 3);
+            //[left side of base, head, right side of base]
+        }
+        else if (degree ==180 ){ //head point to west
+            graphics.drawPolygon(new int[] {widthPerBlock*row + 10, widthPerBlock*row + widthPerBlock - 10, widthPerBlock*row + widthPerBlock - 10}, 
+            new int[] {heightPerBlock*column + heightPerBlock/2, heightPerBlock*column + 10, heightPerBlock*column + heightPerBlock - 10}, 3);
+            //[head, right side of base, left side of base]
+        }
+        else { //head point to east
+            graphics.drawPolygon(new int[] {widthPerBlock*row + 10, widthPerBlock*row + widthPerBlock - 10, widthPerBlock*row + 10}, 
+            new int[] {heightPerBlock*column + 10, heightPerBlock*column + heightPerBlock/2, heightPerBlock*column + heightPerBlock - 10}, 3);
+            //[left side of base, head, right base]
+        }
     }
 
     public void move(){
