@@ -32,9 +32,18 @@ public class World extends JPanel implements KeyListener, ActionListener {
     private Wall[] myWall;  //set myWall as array object of Wall
     private InputProcessor myInputProcessor; //set myInput as object of InputProcessor
     private Random rand = new Random();  //instance Random to use random
-    private char move, turnLeft, turnRight; //set move, turnLeft, turnRight as attribute to collect key input 
+    private char move, turnLeft, turnRight; //set move, turnLeft, turnRight as attribute to collect key input
 
     public World(int row,int column) {
+
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: ThatphumCpre
+        //
+        // Description: insert row,column and create wall,object,robot that no overlap
+        //
+        /////////////////////////////////////////////////////
+
         totalWall = (int)row*column/3; //calculate quantitity of wall
         myWall = new Wall[totalWall];  //set array size
         this.row=row;       //collect row
@@ -54,11 +63,19 @@ public class World extends JPanel implements KeyListener, ActionListener {
         addKeyListener(this);  //add class know keyPressed
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
+
     }
 
     public World(String filename) {
-    /* read or load file from filename
-    */
+
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: ThatphumCpre
+        //
+        // Description: Read save that from savewWorld.txt file
+        //
+        /////////////////////////////////////////////////////
+        
       try {
         int line = 1;
         int createdWall = 0;
@@ -129,6 +146,15 @@ public class World extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void paint(Graphics graphics) {
+
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: ThatphumCpre
+        //
+        // Description: draw each component
+        //
+        /////////////////////////////////////////////////////
+
         //background
         graphics.setColor(Color.white);  //draw white background
         graphics.fillRect(0, 0, 720, 720);
@@ -166,6 +192,15 @@ public class World extends JPanel implements KeyListener, ActionListener {
     }
 
     public  void drawLine(Graphics graphics){
+
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: ThatphumCpre
+        //
+        // Description: draw grid line
+        //
+        /////////////////////////////////////////////////////
+
         int widthPerBlock = (int)(720/row);  //calculate space of block
         int heightPerBlock =(int)(720/column);
         graphics.setColor(Color.DARK_GRAY);
@@ -178,6 +213,14 @@ public class World extends JPanel implements KeyListener, ActionListener {
     }
 
     public void saveWorld(String filename){
+
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: ThatphumCpre
+        //
+        // Description: write  all attribute to "filename"
+        //
+        /////////////////////////////////////////////////////
         try {
             File save = new File(filename);  //create filename.txt
             save.createNewFile();       //create File

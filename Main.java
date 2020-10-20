@@ -4,6 +4,15 @@ import javax.swing.JFrame;
 
 public class Main {
     public static void main(String[] args) {
+
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: ThatphumCpre
+        //
+        // Description: create window and add robotWorld 
+        //
+        /////////////////////////////////////////////////////
+
         try {  //if input values
 
             JFrame window = new JFrame("ROBOT WORLD"); //create window
