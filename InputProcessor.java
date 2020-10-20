@@ -10,6 +10,15 @@ public class InputProcessor{
     private boolean save = false;
 
     public InputProcessor(Robot robot, Wall[] wall){ //if it doesn't have input key
+
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: Purin Petch-in
+        //
+        // Description: insert robot and wall
+        // 
+        /////////////////////////////////////////////////////
+
         this.moveKey = 'w';
         this.turnLeftKey = 'a';
         this.turnRightKey = 'd';
@@ -18,12 +27,31 @@ public class InputProcessor{
     }
 
     public InputProcessor(char move, char turnLeft, char turnRight, Robot robot, Wall[] wall){ //when have input key
+
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: Purin Petch-in
+        //
+        // Description: insert move key, turn left key, turn right key, robot and wall
+        // 
+        /////////////////////////////////////////////////////
+
         this.moveKey = move;
         this.turnLeftKey = turnLeft;
         this.turnRightKey = turnRight;
     }
 
     public void checkMove(char inputKey, int worldRow, int worldColumn, int maxWall){ //check input for moving robot and save file
+
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: Purin Petch-in
+        //
+        // Description: check input if it the move or turn key it will make robot move (if infront of robot is wall or edge it can't move forward) and
+        //              save key
+        // 
+        /////////////////////////////////////////////////////
+
         if (inputKey == moveKey){ //if input key equal to move key
             for (int i = 0; i < maxWall; i++){ //check with all wall
                 if (robot.getDegree() == 0 && robot.getRow() + 1 == wall[i].getRow() && robot.getColumn() == wall[i].getColumn()){ //when head point to east and hit wall
