@@ -4,6 +4,8 @@ import java_robot.robot.Robot;      //import Robot
 import java_robot.objective.Objective;    //import Objective
 import java_robot.wall.Wall;    //import Wall
 import java_robot.inputprocessor.InputProcessor;    //import InputProcessor
+import java_robot.flowchart.Flowchart;
+import java_robot.node.Node;
 
 import java.awt.Color;  //import to use Color
 import java.awt.Graphics;   //import to draw geometric
@@ -33,6 +35,42 @@ public class World extends JPanel implements KeyListener, ActionListener {
     private InputProcessor myInputProcessor; //set myInput as object of InputProcessor
     private Random rand = new Random();  //instance Random to use random
     private char move, turnLeft, turnRight; //set move, turnLeft, turnRight as attribute to collect key input
+    private Node lastAccess;
+    private boolean turn = true;
+    private Flowchart myFlow;
+
+    public World(int row,int column,Flowchart my) {
+        myFlow = my;
+        lastAccess = myFlow.data;
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: ThatphumCpre
+        //
+        // Description: insert row,column and create wall,object,robot that no overlap
+        //
+        /////////////////////////////////////////////////////
+
+        totalWall = (int)row*column/3; //calculate quantitity of wall
+        myWall = new Wall[totalWall];  //set array size
+        this.row=row;       //collect row
+        this.column=column; //collect column
+        this.myRobot = new Robot();     //instance Robot
+        this.myObjective = new Objective(); //instance Objective
+        int created = 0;
+        while(created < totalWall){       //instance each Wall with no overlap with objective and robot
+            int rand1 = rand.nextInt(12);
+            int rand2 = rand.nextInt(12);
+            if(rand1 != myRobot.getRow() && rand2 != myRobot.getColumn() && rand1 != myObjective.getRow() && rand2 != myObjective.getColumn()){
+                myWall[created] = new Wall(rand1,rand2);
+                created++;
+            }
+        }
+        this.myInputProcessor = new InputProcessor(myRobot, myWall);
+        addKeyListener(this);  //add class know keyPressed
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
+
+    }
 
     public World(int row,int column) {
 
@@ -75,7 +113,7 @@ public class World extends JPanel implements KeyListener, ActionListener {
         // Description: Read save that from savewWorld.txt file
         //
         /////////////////////////////////////////////////////
-        
+
       try {
         int line = 1;
         int createdWall = 0;
@@ -164,6 +202,7 @@ public class World extends JPanel implements KeyListener, ActionListener {
             myWall[i].drawWall(graphics);
         }
         this.drawLine(graphics);        //draw world line
+        System.out.println(this.isBlocked());
 
     }
 
@@ -174,7 +213,9 @@ public class World extends JPanel implements KeyListener, ActionListener {
             this.saveWorld("worldsave.txt");    //save world data
             myInputProcessor.setSave(false);
         }
+        this.doFlowchart(myFlow);
         repaint();   //draw again
+
     }
 
     @Override
@@ -185,10 +226,12 @@ public class World extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void keyTyped(KeyEvent ke) {
+        System.out.println("hi");
     }
 
     @Override
     public void keyReleased(KeyEvent ke) {
+
     }
 
     public  void drawLine(Graphics graphics){
@@ -244,6 +287,114 @@ public class World extends JPanel implements KeyListener, ActionListener {
         }
     }
 
+    public boolean isBlocked() {
+
+        for (int i = 0; i<totalWall; i++) {
+          if (myRobot.getDegree() == 0 && myRobot.getRow()+1 == myWall[i].getRow() && myRobot.getColumn() == myWall[i].getColumn()) {
+            return true;
+        } else if (myRobot.getDegree() == 180 && myRobot.getRow()-1 == myWall[i].getRow() && myRobot.getColumn() == myWall[i].getColumn()) {
+            return true;
+        } else if (myRobot.getDegree() == 90 && myRobot.getRow() == myWall[i].getRow() && myRobot.getColumn()+1 == myWall[i].getColumn()) {
+            return true;
+        } else if (myRobot.getDegree() == 270 && myRobot.getRow() == myWall[i].getRow() && myRobot.getColumn()-1 == myWall[i].getColumn()) {
+            return true;
+        } else if (myRobot.getDegree() == 0 && myRobot.getRow()+1 == row) {
+            return true;
+        } else if (myRobot.getDegree() == 180 && myRobot.getRow()-1 < 0) {
+            return true;
+        } else if (myRobot.getDegree() == 90 && myRobot.getColumn()+1 == column) {
+            return true;
+        } else if (myRobot.getDegree() == 270 && myRobot.getColumn()-1 < 0) {
+            return true;
+        } else if (i == totalWall) {
+            return false;
+          }
+        }
+        return false;
+      }
+
+     public void doFlowchart(Flowchart myFlow) {
+        System.out.println(lastAccess);
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: ThatphumCpre
+        //
+        // Description: let robot do from input Flowchart
+        //
+        /////////////////////////////////////////////////////
+        //delay time before start
+          getFlow(lastAccess);  //find next node to do
+          if (lastAccess != null) {  //if have command to do
+            doCommand(lastAccess.command); //then do that belong to command
+          }
+          else {
+            if(myFlow.lastIF.endTrueNode.right == null){   //is node is empty
+            lastAccess = myFlow.data;    //restart node to do again
+            turn = true;          //reset turn of flowchart
+            System.out.println();
+            System.out.println("Start Agian");
+            }
+            else{
+              lastAccess = myFlow.lastIF.endTrueNode;  //if have something to do affter then then do next is endTrueNode
+            }
+          }
+      }
+
+      public void getFlow(Node args) {
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: ThatphumCpre
+        //
+        // Description: find next node that can do
+        //
+        /////////////////////////////////////////////////////
+        if (args != null ) { //if argument node is not empty then
+          if (args.ifType == false && turn  ) { //if turn true line
+            Node temp = lastAccess.right;   //next node is right node
+            lastAccess = temp;
+          } else if (args.ifType == false && !turn  ) {  //if turn is false line  then
+            Node temp = lastAccess.left;  //next node is left node
+            lastAccess = temp;
+          } else if (lastAccess.ifType == true && lastAccess.command.equals("IF isBlocked()" )   ) {
+            turn= this.isBlocked();  //calculate turn to collect
+            if (turn == false) {    //if turn is false line then
+              Node temp = lastAccess.left; //next node is left node
+              lastAccess = temp;
+            } else if (turn) {      //if turn is true line then
+              Node temp = lastAccess.right;    //next node is right node
+              lastAccess = temp;
+            }
+          }
+          System.out.println(args.command);
+        }
+      }
+
+
+      void doCommand(String args) {
+        /////////////////////////////////////////////////////
+        //
+        // Programmer: ThatphumCpre
+        //
+        // Description: Make robot do from string argument
+        //
+        /////////////////////////////////////////////////////
+
+        if (args.equals("turnLeft()")) {   //if it's  turnLeft then do it  and redraw
+          myRobot.turnLeft();
+          repaint();
+        }
+        else if (args.equals("turnRight()")) { //if it is turnRight() then do it  and redraw
+          myRobot.turnRight();
+          repaint();
+        }
+        else if (args.equals("move()"))  //if it is turnLeft() then do it and re draw
+        {
+          if (isBlocked()==false) {
+            myRobot.move();
+            repaint();
+          }
+        }
+      }
 
 
 }
