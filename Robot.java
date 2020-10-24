@@ -39,7 +39,7 @@ public class Robot {
         this.column = column;
         degree = 0;
 
-    }
+    } 
 
     public void drawRobot(Graphics graphics){
         graphics.setColor(Color.DARK_GRAY);  //set Color is Dark Gray

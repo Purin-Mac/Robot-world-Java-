@@ -209,6 +209,9 @@ public class World extends JPanel implements KeyListener, ActionListener {
     @Override
     public void keyPressed(KeyEvent ke) {
         myInputProcessor.checkMove(ke.getKeyChar(), row, column, totalWall); //check input key
+        if(targetCheck()){
+          restart();
+        }
         if (myInputProcessor.getSave() == true){
             this.saveWorld("worldsave.txt");    //save world data
             myInputProcessor.setSave(false);
@@ -394,6 +397,48 @@ public class World extends JPanel implements KeyListener, ActionListener {
             repaint();
           }
         }
+      }
+
+      public boolean targetCheck(){
+        if(myRobot.getRow() ==  myObjective.getRow() && myRobot.getColumn() == myObjective.getColumn()){
+             return true;
+         }
+          else{
+              return false;
+          }
+      }
+
+      public void restart(){
+        boolean notOverlap = false;
+        int ranR = rand.nextInt(12);
+        int ranC = rand.nextInt(12);
+        while(!notOverlap){
+          boolean temp1,temp2 = true;
+          ranR = rand.nextInt(12);
+          ranC = rand.nextInt(12);
+          for( int i = 0; i < totalWall; i++){
+            if(ranR != myWall[i].getRow() && ranC != myWall[i].getColumn()){
+              temp1 = true;
+            }
+            else{
+              temp1 = false;
+           }
+           if(temp1 && temp2 ){
+             temp2 = true;
+           }
+           else{
+             temp2 = false;
+           }
+          }
+          if(temp2 == true){
+            if(ranR != myRobot.getRow() && ranC != myRobot.getColumn()){
+              notOverlap = true;
+            }
+          }
+        }
+        System.out.println(ranR);
+        System.out.println(ranC);
+        myObjective = new Objective(ranR,ranC);
       }
 
 
